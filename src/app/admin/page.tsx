@@ -45,7 +45,7 @@ export default function AdminPage() {
     updatePortfolioItem,
     deletePortfolioItem
   } = useProject();
-  const { t, language } = useLanguage();
+  const { t } = useLanguage();
   const { toast } = useToast();
   
   const [activeTab, setActiveTab] = useState<AdminTab>('customers');
@@ -174,7 +174,7 @@ export default function AdminPage() {
               {selectedProject.milestones.map((milestone) => (
                 <div key={milestone.id} className="space-y-3 p-4 rounded-xl bg-muted/20 border border-primary/5">
                   <div className="flex items-center justify-between gap-4">
-                    <span className="text-sm font-bold text-primary uppercase tracking-tight">{t[milestone.nameKey]}</span>
+                    <span className="text-sm font-bold text-primary uppercase tracking-tight">{t[milestone.nameKey as keyof typeof t] || milestone.nameKey}</span>
                     <Select 
                       value={milestone.status} 
                       onValueChange={(val) => updateMilestone(selectedProject.id, milestone.id, val as MilestoneStatus)}
@@ -347,7 +347,7 @@ export default function AdminPage() {
               className="w-full h-12 bg-primary text-background font-bold gap-2 rounded-xl"
             >
               <Plus className="w-5 h-5" />
-              {language === 'am' ? t.amAddPortfolio : t.addPortfolio}
+              {t.addPortfolio}
             </Button>
 
             <div className="grid grid-cols-1 gap-4">
@@ -385,12 +385,12 @@ export default function AdminPage() {
         <DialogContent className="bg-card border-primary/20 text-foreground rounded-2xl">
           <DialogHeader>
             <DialogTitle className="font-headline text-2xl text-primary">
-              {editingPortfolioItem ? t.editPortfolio : (language === 'am' ? t.amAddPortfolio : t.addPortfolio)}
+              {editingPortfolioItem ? t.editPortfolio : t.addPortfolio}
             </DialogTitle>
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div className="space-y-2">
-              <Label>{language === 'am' ? t.amPortfolioName : t.portfolioName}</Label>
+              <Label>{t.portfolioName}</Label>
               <Input 
                 value={portfolioTitle} 
                 onChange={(e) => setPortfolioTitle(e.target.value)}
@@ -408,7 +408,7 @@ export default function AdminPage() {
               />
             </div>
             <div className="space-y-2">
-              <Label>{language === 'am' ? t.amPortfolioRating : t.portfolioRating}</Label>
+              <Label>{t.portfolioRating}</Label>
               <Input 
                 type="number"
                 step="0.1"
@@ -422,7 +422,7 @@ export default function AdminPage() {
           </div>
           <DialogFooter>
             <Button onClick={handleSavePortfolio} className="w-full bg-primary text-background font-bold">
-              {language === 'am' ? t.amSaveProject : t.saveProject}
+              {t.saveProject}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -446,7 +446,7 @@ export default function AdminPage() {
         <AlertDialogContent className="bg-card border-primary/20 text-foreground">
           <AlertDialogHeader>
             <AlertDialogTitle>{t.confirmDeleteTitle}</AlertDialogTitle>
-            <AlertDialogDescription>{language === 'am' ? "ይህንን ስራ ከፖርትፎሊዮው ማጥፋት ይፈልጋሉ?" : "Remove this project from portfolio?"}</AlertDialogDescription>
+            <AlertDialogDescription>{t.portfolioDeleted}</AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>{t.cancel}</AlertDialogCancel>
