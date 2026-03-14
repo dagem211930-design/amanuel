@@ -1,0 +1,41 @@
+
+{
+  "placeholderImages": [
+    {
+      "id": "project-1",
+      "description": "Luxury living room with high-end finishing",
+      "imageUrl": "https://picsum.photos/seed/luxury1/800/600",
+      "imageHint": "luxury interior"
+    },
+    {
+      "id": "project-2",
+      "description": "Modern kitchen with custom cabinetry",
+      "imageUrl": "https://picsum.photos/seed/luxury2/800/600",
+      "imageHint": "modern kitchen"
+    },
+    {
+      "id": "project-3",
+      "description": "Elegant bathroom with premium ceramic tiles",
+      "imageUrl": "https://picsum.photos/seed/luxury3/800/600",
+      "imageHint": "luxury bathroom"
+    },
+    {
+      "id": "project-4",
+      "description": "Grand hallway with architectural lighting",
+      "imageUrl": "https://picsum.photos/seed/luxury4/800/600",
+      "imageHint": "grand hallway"
+    },
+    {
+      "id": "worker-1",
+      "description": "Portrait of Marcus Aurelius",
+      "imageUrl": "https://picsum.photos/seed/worker1/400/400",
+      "imageHint": "professional man"
+    },
+    {
+      "id": "worker-2",
+      "description": "Portrait of Elena Petrov",
+      "imageUrl": "https://picsum.photos/seed/worker2/400/400",
+      "imageHint": "professional woman"
+    }
+  ]
+}

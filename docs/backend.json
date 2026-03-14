@@ -1,0 +1,413 @@
+{
+  "entities": {
+    "Project": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Project",
+      "type": "object",
+      "description": "Represents a single construction or renovation project undertaken by PrimeFinish Pro, tracking its estimated costs, details, and overall progress via linked services and milestones. This entity supports the 'Project Cost Estimator' and 'Live Project Status Portal' features.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the Project entity."
+        },
+        "name": {
+          "type": "string",
+          "description": "A descriptive name for the project (e.g., 'Luxury Penthouse Renovation')."
+        },
+        "description": {
+          "type": "string",
+          "description": "A detailed description of the project scope and client requirements."
+        },
+        "clientName": {
+          "type": "string",
+          "description": "The name of the client associated with this project."
+        },
+        "startDate": {
+          "type": "string",
+          "description": "The date and time when the project officially started.",
+          "format": "date-time"
+        },
+        "estimatedCompletionDate": {
+          "type": "string",
+          "description": "The estimated date and time for the project's completion.",
+          "format": "date-time"
+        },
+        "projectAreaSqM": {
+          "type": "number",
+          "description": "The total area of the project in square meters, used for cost estimation."
+        },
+        "estimatedTotalCost": {
+          "type": "number",
+          "description": "The total estimated cost for the entire project."
+        },
+        "laborCost": {
+          "type": "number",
+          "description": "The estimated labor cost component of the project (typically 40% of total)."
+        },
+        "materialCost": {
+          "type": "number",
+          "description": "The estimated material cost component of the project (typically 60% of total)."
+        },
+        "projectServiceIds": {
+          "type": "array",
+          "description": "References to ProjectService entities detailing the specific services and their supply options for this project. (Relationship: Project 1:N ProjectService)",
+          "items": {
+            "type": "string"
+          }
+        },
+        "projectMilestoneIds": {
+          "type": "array",
+          "description": "References to ProjectMilestone entities, each tracking the status and details of a project milestone. (Relationship: Project 1:N ProjectMilestone)",
+          "items": {
+            "type": "string"
+          }
+        },
+        "workerIds": {
+          "type": "array",
+          "description": "References to Worker entities assigned to this project. (Relationship: Worker N:N Project)",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "projectAreaSqM",
+        "estimatedTotalCost",
+        "laborCost",
+        "materialCost",
+        "projectServiceIds",
+        "projectMilestoneIds"
+      ]
+    },
+    "Service": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Service",
+      "type": "object",
+      "description": "Defines the types of services PrimeFinish Pro offers (e.g., Ceramic, Painting, Gypsum), used in the estimator and booking forms.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the Service entity."
+        },
+        "name": {
+          "type": "string",
+          "description": "The human-readable name of the service (e.g., 'Ceramic Installation', 'Interior Painting', 'Gypsum Ceiling Work')."
+        },
+        "description": {
+          "type": "string",
+          "description": "A detailed description of what the service entails, including common practices or materials."
+        },
+        "basePricePerSqM": {
+          "type": "number",
+          "description": "The optional base price per square meter for this service, used in cost estimation."
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "description"
+      ]
+    },
+    "Worker": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Worker",
+      "type": "object",
+      "description": "Stores information about the skilled workers employed by PrimeFinish Pro, showcased in the 'Explore (Portfolio)' section.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the Worker entity."
+        },
+        "firstName": {
+          "type": "string",
+          "description": "The first name of the worker."
+        },
+        "lastName": {
+          "type": "string",
+          "description": "The last name of the worker."
+        },
+        "specialty": {
+          "type": "string",
+          "description": "The primary skill or specialty of the worker (e.g., 'Master Tiler', 'Paint Finisher')."
+        },
+        "bio": {
+          "type": "string",
+          "description": "A short biography or summary of the worker's expertise and experience."
+        },
+        "profileImageUrl": {
+          "type": "string",
+          "description": "URL to the worker's profile picture.",
+          "format": "uri"
+        },
+        "overallRating": {
+          "type": "number",
+          "description": "An optional overall rating for the worker based on performance or customer feedback."
+        }
+      },
+      "required": [
+        "id",
+        "firstName",
+        "lastName",
+        "specialty"
+      ]
+    },
+    "ProjectShowcaseItem": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "ProjectShowcaseItem",
+      "type": "object",
+      "description": "Represents an entry in the 'Explore (Portfolio)' section, highlighting PrimeFinish Pro's past luxury projects.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the ProjectShowcaseItem entity."
+        },
+        "title": {
+          "type": "string",
+          "description": "The title of the showcased project (e.g., 'Opulent Penthouse Bathroom')."
+        },
+        "description": {
+          "type": "string",
+          "description": "A detailed description of the showcased project, including design philosophy and materials used."
+        },
+        "mainImageUrl": {
+          "type": "string",
+          "description": "URL to the primary image for the project showcase.",
+          "format": "uri"
+        },
+        "galleryImageUrls": {
+          "type": "array",
+          "description": "An array of URLs to additional high-resolution images of the project.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "completionDate": {
+          "type": "string",
+          "description": "The date and time when the showcased project was completed.",
+          "format": "date-time"
+        },
+        "customerRating": {
+          "type": "number",
+          "description": "An optional rating for the project, either internal quality score or customer-provided."
+        },
+        "workerIds": {
+          "type": "array",
+          "description": "References to Worker entities who contributed to this showcased project. (Relationship: Worker N:N ProjectShowcaseItem)",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "id",
+        "title",
+        "description",
+        "mainImageUrl",
+        "completionDate"
+      ]
+    },
+    "ConsultationRequest": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "ConsultationRequest",
+      "type": "object",
+      "description": "Records requests from prospective clients submitted via the 'Booking' form for a consultation.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the ConsultationRequest entity."
+        },
+        "contactPhoneNumber": {
+          "type": "string",
+          "description": "The contact phone number provided by the client for the consultation request."
+        },
+        "preferredServiceId": {
+          "type": "string",
+          "description": "Reference to the Service entity indicating the client's preferred service. (Relationship: Service 1:N ConsultationRequest)"
+        },
+        "requestDateTime": {
+          "type": "string",
+          "description": "The date and time when the consultation request was submitted.",
+          "format": "date-time"
+        },
+        "status": {
+          "type": "string",
+          "description": "The current status of the consultation request (e.g., 'New', 'Pending Review', 'Contacted', 'Scheduled', 'Closed')."
+        }
+      },
+      "required": [
+        "id",
+        "contactPhoneNumber",
+        "preferredServiceId",
+        "requestDateTime",
+        "status"
+      ]
+    },
+    "ProjectService": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "ProjectService",
+      "type": "object",
+      "description": "Represents a specific service selected for a project, including its supply options, used to itemize services for a given project.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the ProjectService entity."
+        },
+        "projectId": {
+          "type": "string",
+          "description": "Reference to the Project entity it belongs to. (Relationship: Project 1:N ProjectService)"
+        },
+        "serviceId": {
+          "type": "string",
+          "description": "Reference to the Service entity chosen. (Relationship: Service 1:N ProjectService)"
+        },
+        "supplyOption": {
+          "type": "string",
+          "description": "Specifies if the service includes 'Full Supply' of materials or is 'Labor Only'."
+        }
+      },
+      "required": [
+        "id",
+        "projectId",
+        "serviceId",
+        "supplyOption"
+      ]
+    },
+    "ProjectMilestone": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "ProjectMilestone",
+      "type": "object",
+      "description": "Tracks the status and details of a specific milestone for a project, providing granular progress updates for the 'Live Project Status Portal' and 'Smart Project Progress Explanations' features.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the ProjectMilestone entity."
+        },
+        "projectId": {
+          "type": "string",
+          "description": "Reference to the Project entity it belongs to. (Relationship: Project 1:N ProjectMilestone)"
+        },
+        "milestoneIdentifier": {
+          "type": "string",
+          "description": "A canonical identifier for the milestone type (e.g., 'consultation', 'structural_prep')."
+        },
+        "name": {
+          "type": "string",
+          "description": "The human-readable name of the milestone (e.g., 'Consultation', 'Structural Prep')."
+        },
+        "status": {
+          "type": "string",
+          "description": "The current status of the milestone ('completed', 'in-progress', 'pending')."
+        },
+        "statusDate": {
+          "type": "string",
+          "description": "The date and time when the milestone status was last updated or completed.",
+          "format": "date-time"
+        },
+        "explanation": {
+          "type": "string",
+          "description": "An AI-generated explanation or update regarding this milestone's progress, enhancing client understanding."
+        }
+      },
+      "required": [
+        "id",
+        "projectId",
+        "milestoneIdentifier",
+        "name",
+        "status"
+      ]
+    }
+  },
+  "auth": {
+    "providers": [
+      "password",
+      "anonymous"
+    ]
+  },
+  "firestore": {
+    "structure": [
+      {
+        "path": "/projects/{projectId}",
+        "definition": {
+          "entityName": "Project",
+          "schema": {
+            "$ref": "#/backend/entities/Project"
+          },
+          "description": "Stores the main details for each construction or renovation project. Access is based on knowing the 'projectId', allowing customers to view their specific project status. Admin users have full read/write access. Includes references to ProjectService and ProjectMilestone IDs. Read access is granted to anyone who provides the correct projectId (acting as a lookup key for customer view). Write access is restricted to authenticated administrators."
+        }
+      },
+      {
+        "path": "/projects/{projectId}/projectMilestones/{milestoneId}",
+        "definition": {
+          "entityName": "ProjectMilestone",
+          "schema": {
+            "$ref": "#/backend/entities/ProjectMilestone"
+          },
+          "description": "Tracks the status and details of individual milestones for a specific project. This is a subcollection of 'Project'. Includes a 'projectId' field (denormalized in the path) for clear ownership and simplified security rules. Read access is granted to anyone who can access the parent project. Write access is restricted to authenticated administrators for updating milestone statuses."
+        }
+      },
+      {
+        "path": "/projects/{projectId}/projectServices/{projectServiceId}",
+        "definition": {
+          "entityName": "ProjectService",
+          "schema": {
+            "$ref": "#/backend/entities/ProjectService"
+          },
+          "description": "Details a specific service selected for a project, including supply options. This is a subcollection of 'Project'. Includes a 'projectId' field (denormalized in the path) for clear ownership and simplified security rules. Read access is granted to anyone who can access the parent project. Write access is restricted to authenticated administrators."
+        }
+      },
+      {
+        "path": "/services/{serviceId}",
+        "definition": {
+          "entityName": "Service",
+          "schema": {
+            "$ref": "#/backend/entities/Service"
+          },
+          "description": "Defines the types of services PrimeFinish Pro offers. This is global, public read-only data for the estimator and booking forms. Admin users have full read/write access."
+        }
+      },
+      {
+        "path": "/workers/{workerId}",
+        "definition": {
+          "entityName": "Worker",
+          "schema": {
+            "$ref": "#/backend/entities/Worker"
+          },
+          "description": "Stores information about skilled workers. This is global, public read-only data for the 'Explore (Portfolio)' section. Admin users have full read/write access."
+        }
+      },
+      {
+        "path": "/projectShowcaseItems/{showcaseItemId}",
+        "definition": {
+          "entityName": "ProjectShowcaseItem",
+          "schema": {
+            "$ref": "#/backend/entities/ProjectShowcaseItem"
+          },
+          "description": "Represents entries in the 'Explore (Portfolio)' section, highlighting past luxury projects. This is global, public read-only data. Admin users have full read/write access."
+        }
+      },
+      {
+        "path": "/consultationRequests/{requestId}",
+        "definition": {
+          "entityName": "ConsultationRequest",
+          "schema": {
+            "$ref": "#/backend/entities/ConsultationRequest"
+          },
+          "description": "Records requests from prospective clients for consultations. Any user can create a request. Read, update, and delete access are restricted to authenticated administrators."
+        }
+      },
+      {
+        "path": "/roles_admin/{uid}",
+        "definition": {
+          "entityName": "UserRole",
+          "schema": {
+            "$ref": "#/backend/entities/User"
+          },
+          "description": "A collection used for Database Access Control (DBAC). Each document in this collection signifies that the user identified by '{uid}' has administrator privileges. Read access is typically restricted to the user themselves for verification, and write access is for other admins or specific setup processes."
+        }
+      }
+    ],
+    "reasoning": "The Firestore structure is designed to support the 'PrimeFinish Pro' application's requirements, prioritizing authorization independence, clear access modeling, and simplified security rules. The core principle of 'Authorization Independence' is achieved by structuring user-facing project data hierarchically under the project ID and using a 'public read with ID, admin write' model. Specifically, for customer-facing 'Project Status', the system relies on the customer providing a unique 'Project ID'. This ID is then used as a direct path parameter, making the `Project` document and its associated `ProjectMilestone` and `ProjectService` subcollections directly queryable. This approach eliminates the need for `get()` calls in security rules to check parent document attributes for authorization, enabling atomic operations and simplifying rule logic.\n\nFor 'Query Anywhere, Privately Secured' (QAPs), the structure segregates data based on its security posture:\n\n1.  **Customer-Viewable Project Data (`/projects/{projectId}`, `/projects/{projectId}/projectMilestones`, `/projects/{projectId}/projectServices`):** The customer's 'Project ID' acts as a direct lookup key. By making the `projectId` the path parameter, a customer can only *get* or *list* documents *within their specific project scope*. This inherently restricts `list` operations to a known, provided `projectId`, preventing broad, unauthorized data leakage and making rules very simple (e.g., `allow read: if true;` when the ID itself is the access credential for public viewing, or `allow read: if resource.data.customerId == request.auth.uid;` if authenticated customer access was required).\n    *   For the 'Admin Toggle', administrative write access is granted through a separate top-level `roles_admin` collection, where an `exists()` check verifies the authenticated user's admin status. This is independent of the project's data content or any parent document, maintaining authorization independence for write operations.\n\n2.  **Global Public Data (`/services`, `/workers`, `/projectShowcaseItems`):** These collections are designed for public read access (e.g., for the 'Explore Portfolio' and 'Estimator' sections). All documents within these collections share the same security posture, making `list` operations inherently secure and performant.\n\n3.  **Private Admin-Managed Data (`/consultationRequests`):** These documents can be created by any user (anonymous or authenticated) but are only readable/writable by designated administrators, identified via the `roles_admin` collection. This ensures client requests remain confidential and are handled by authorized personnel.\n\n**Denormalization for Authorization Independence:**\n*   `ProjectMilestone` documents inherently contain `projectId` as a field and are placed in a subcollection `/projects/{projectId}/projectMilestones/{milestoneId}`. The `projectId` in the path ensures that the context for authorization (who can see/update *this* project's milestones) is directly available without needing to `get()` the parent `/projects/{projectId}` document. The same applies to `ProjectService` documents.\n*   Admin roles are managed in a distinct top-level collection `/roles_admin/{uid}`, allowing security rules to check for admin status using `exists()` without complex hierarchical lookups.\n\nThis design ensures simple, robust, and easily debuggable security rules that clearly reflect access intent, while supporting the unique customer project tracking and admin capabilities."
+  }
+}
