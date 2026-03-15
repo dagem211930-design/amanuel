@@ -3,7 +3,19 @@
 import { useState, useRef } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { Home, ClipboardList, Grid, CalendarDays, LogOut, ShieldAlert, Languages } from 'lucide-react';
+import { 
+  Home, 
+  ClipboardList, 
+  Grid, 
+  CalendarDays, 
+  LogOut, 
+  ShieldAlert, 
+  Languages, 
+  Menu, 
+  ChevronLeft, 
+  ChevronRight,
+  X
+} from 'lucide-react';
 import { useLanguage } from '@/context/language-context';
 import { useProject } from '@/context/project-context';
 import { Button } from '@/components/ui/button';
@@ -15,6 +27,11 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
+import {
+  Sheet,
+  SheetContent,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 
@@ -27,6 +44,8 @@ export function Navigation() {
 
   const [isAdminDialogOpen, setIsAdminDialogOpen] = useState(false);
   const [adminPin, setAdminPin] = useState('');
+  const [isDesktopCollapsed, setIsDesktopCollapsed] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const longPressTimer = useRef<NodeJS.Timeout | null>(null);
 
   if (pathname === '/login') return null;
@@ -73,20 +92,25 @@ export function Navigation() {
     { href: '/booking', icon: CalendarDays, label: t.booking },
   ];
 
-  const Logo = () => (
+  const Logo = ({ collapsed = false }: { collapsed?: boolean }) => (
     <div 
-      className="flex items-center gap-3 cursor-default select-none active:scale-95 transition-transform"
+      className={cn(
+        "flex items-center gap-3 cursor-default select-none active:scale-95 transition-all duration-300",
+        collapsed && "justify-center"
+      )}
       onPointerDown={handlePointerDown}
       onPointerUp={handlePointerUp}
       onPointerLeave={handlePointerUp}
     >
-      <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center shadow-lg shadow-primary/20">
+      <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center shadow-lg shadow-primary/20 shrink-0">
         <span className="text-background font-bold text-xl">P</span>
       </div>
-      <div className="flex flex-col">
-        <h1 className="font-headline text-lg font-bold tracking-tight text-primary leading-none">PrimeFinish</h1>
-        <span className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground font-bold">Pro Edition</span>
-      </div>
+      {!collapsed && (
+        <div className="flex flex-col animate-in fade-in slide-in-from-left-2 duration-300">
+          <h1 className="font-headline text-lg font-bold tracking-tight text-primary leading-none">PrimeFinish</h1>
+          <span className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground font-bold">Pro Edition</span>
+        </div>
+      )}
     </div>
   );
 
@@ -94,7 +118,59 @@ export function Navigation() {
     <>
       {/* Mobile Top Header */}
       <header className="fixed top-0 left-0 right-0 h-16 bg-background/80 backdrop-blur-md border-b z-50 px-4 flex items-center justify-between md:hidden">
-        <Logo />
+        <div className="flex items-center gap-2">
+          <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
+            <SheetTrigger asChild>
+              <Button variant="ghost" size="icon" className="text-primary hover:bg-primary/10">
+                <Menu className="w-6 h-6" />
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="left" className="bg-card border-r-primary/10 w-72 p-0 flex flex-col">
+              <div className="p-6 border-b border-primary/5">
+                <Logo />
+              </div>
+              <nav className="flex-1 p-4 space-y-2">
+                {navItems.map((item) => {
+                  const isActive = pathname === item.href;
+                  return (
+                    <Link key={item.href} href={item.href} onClick={() => setIsMobileMenuOpen(false)}>
+                      <div className={cn(
+                        "flex items-center gap-4 px-4 py-3 rounded-xl transition-all",
+                        isActive 
+                          ? "bg-primary text-background shadow-lg shadow-primary/20" 
+                          : "text-muted-foreground hover:bg-primary/10 hover:text-primary"
+                      )}>
+                        <item.icon className="w-5 h-5" />
+                        <span className="text-sm font-bold uppercase tracking-wider">{item.label}</span>
+                      </div>
+                    </Link>
+                  );
+                })}
+              </nav>
+              <div className="p-4 border-t border-primary/10 space-y-4">
+                <Button 
+                  variant="outline" 
+                  className="w-full justify-start gap-4 h-12 rounded-xl border-primary/20"
+                  onClick={() => setLanguage(language === 'en' ? 'am' : 'en')}
+                >
+                  <Languages className="w-5 h-5 text-primary" />
+                  <span className="text-xs font-bold uppercase tracking-widest">
+                    {language === 'en' ? 'Amharic' : 'English'}
+                  </span>
+                </Button>
+                <Button 
+                  variant="ghost" 
+                  className="w-full justify-start gap-4 h-12 rounded-xl text-muted-foreground hover:text-destructive"
+                  onClick={handleLogout}
+                >
+                  <LogOut className="w-5 h-5" />
+                  <span className="text-xs font-bold uppercase tracking-widest">{t.logout}</span>
+                </Button>
+              </div>
+            </SheetContent>
+          </Sheet>
+          <Logo />
+        </div>
         <div className="flex items-center gap-2">
           <Button 
             variant="ghost" 
@@ -104,61 +180,83 @@ export function Navigation() {
           >
             <Languages className="w-5 h-5" />
           </Button>
-          <Button 
-            variant="ghost" 
-            size="icon" 
-            onClick={handleLogout}
-            className="text-muted-foreground hover:text-destructive h-9 w-9"
-          >
-            <LogOut className="w-5 h-5" />
-          </Button>
         </div>
       </header>
 
       {/* Desktop Sidebar */}
-      <aside className="hidden md:flex flex-col w-72 h-screen sticky top-0 border-r bg-card/30 backdrop-blur-xl z-50 p-8 shrink-0">
-        <div className="mb-12">
-          <Logo />
+      <aside className={cn(
+        "hidden md:flex flex-col h-screen sticky top-0 border-r bg-card/30 backdrop-blur-xl z-50 transition-all duration-300 shrink-0",
+        isDesktopCollapsed ? "w-20" : "w-72"
+      )}>
+        <div className={cn("p-8 relative", isDesktopCollapsed && "p-5")}>
+          <Logo collapsed={isDesktopCollapsed} />
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            onClick={() => setIsDesktopCollapsed(!isDesktopCollapsed)}
+            className="absolute -right-3 top-20 bg-background border border-primary/20 rounded-full h-6 w-6 shadow-md hover:bg-primary/10 hover:text-primary z-50"
+          >
+            {isDesktopCollapsed ? <ChevronRight className="w-3 h-3" /> : <ChevronLeft className="w-3 h-3" />}
+          </Button>
         </div>
         
-        <nav className="flex-1 space-y-2">
+        <nav className="flex-1 px-4 space-y-2 overflow-y-auto">
           {navItems.map((item) => {
             const isActive = pathname === item.href;
             return (
               <Link key={item.href} href={item.href}>
                 <div className={cn(
-                  "flex items-center gap-4 px-4 py-3 rounded-xl transition-all duration-200 group",
+                  "flex items-center transition-all duration-200 group rounded-xl",
+                  isDesktopCollapsed ? "justify-center p-3" : "gap-4 px-4 py-3",
                   isActive 
                     ? "bg-primary text-background shadow-lg shadow-primary/20" 
                     : "text-muted-foreground hover:bg-primary/10 hover:text-primary"
                 )}>
                   <item.icon className={cn("w-5 h-5", !isActive && "group-hover:scale-110 transition-transform")} />
-                  <span className="text-sm font-bold uppercase tracking-wider">{item.label}</span>
+                  {!isDesktopCollapsed && (
+                    <span className="text-sm font-bold uppercase tracking-wider animate-in fade-in slide-in-from-left-1 duration-200">
+                      {item.label}
+                    </span>
+                  )}
                 </div>
               </Link>
             );
           })}
         </nav>
 
-        <div className="pt-8 border-t border-primary/10 space-y-4">
+        <div className={cn("p-6 border-t border-primary/10 space-y-4", isDesktopCollapsed && "p-4")}>
           <Button 
             variant="outline" 
-            className="w-full justify-start gap-4 h-12 rounded-xl border-primary/20 hover:border-primary/40 hover:bg-primary/5 transition-all"
+            className={cn(
+              "w-full rounded-xl border-primary/20 hover:border-primary/40 hover:bg-primary/5 transition-all",
+              isDesktopCollapsed ? "justify-center p-0 h-10" : "justify-start gap-4 h-12"
+            )}
             onClick={() => setLanguage(language === 'en' ? 'am' : 'en')}
+            title={language === 'en' ? 'Switch to Amharic' : 'ወደ እንግሊዝኛ ቀይር'}
           >
-            <Languages className="w-5 h-5 text-primary" />
-            <span className="text-xs font-bold uppercase tracking-widest">
-              {language === 'en' ? 'Switch to Amharic' : 'ወደ እንግሊዝኛ ቀይር'}
-            </span>
+            <Languages className="w-5 h-5 text-primary shrink-0" />
+            {!isDesktopCollapsed && (
+              <span className="text-[10px] font-bold uppercase tracking-widest overflow-hidden whitespace-nowrap">
+                {language === 'en' ? 'Amharic' : 'English'}
+              </span>
+            )}
           </Button>
           
           <Button 
             variant="ghost" 
-            className="w-full justify-start gap-4 h-12 rounded-xl text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-all"
+            className={cn(
+              "w-full rounded-xl text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-all",
+              isDesktopCollapsed ? "justify-center p-0 h-10" : "justify-start gap-4 h-12"
+            )}
             onClick={handleLogout}
+            title={t.logout}
           >
-            <LogOut className="w-5 h-5" />
-            <span className="text-xs font-bold uppercase tracking-widest">{t.logout}</span>
+            <LogOut className="w-5 h-5 shrink-0" />
+            {!isDesktopCollapsed && (
+              <span className="text-[10px] font-bold uppercase tracking-widest overflow-hidden whitespace-nowrap">
+                {t.logout}
+              </span>
+            )}
           </Button>
         </div>
       </aside>
