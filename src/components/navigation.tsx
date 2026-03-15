@@ -3,7 +3,7 @@
 import { useState, useRef } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { Home, ClipboardList, Grid, CalendarDays, LogOut, ShieldAlert } from 'lucide-react';
+import { Home, ClipboardList, Grid, CalendarDays, LogOut, ShieldAlert, Languages } from 'lucide-react';
 import { useLanguage } from '@/context/language-context';
 import { useProject } from '@/context/project-context';
 import { Button } from '@/components/ui/button';
@@ -37,7 +37,6 @@ export function Navigation() {
   };
 
   const handlePointerDown = () => {
-    // RESTORED: Admin Panel trigger (3-second long press on the logo)
     longPressTimer.current = setTimeout(() => {
       setIsAdminDialogOpen(true);
     }, 3000);
@@ -51,7 +50,6 @@ export function Navigation() {
 
   const handleAdminAuth = (e: React.FormEvent) => {
     e.preventDefault();
-    // VERIFIED: Admin PIN is 2026
     if (adminPin === '2026') {
       setIsAdminDialogOpen(false);
       setAdminPin('');
@@ -75,82 +73,145 @@ export function Navigation() {
     { href: '/booking', icon: CalendarDays, label: t.booking },
   ];
 
+  const Logo = () => (
+    <div 
+      className="flex items-center gap-3 cursor-default select-none active:scale-95 transition-transform"
+      onPointerDown={handlePointerDown}
+      onPointerUp={handlePointerUp}
+      onPointerLeave={handlePointerUp}
+    >
+      <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center shadow-lg shadow-primary/20">
+        <span className="text-background font-bold text-xl">P</span>
+      </div>
+      <div className="flex flex-col">
+        <h1 className="font-headline text-lg font-bold tracking-tight text-primary leading-none">PrimeFinish</h1>
+        <span className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground font-bold">Pro Edition</span>
+      </div>
+    </div>
+  );
+
   return (
     <>
-      <header className="fixed top-0 left-0 right-0 h-16 bg-background/80 backdrop-blur-md border-b z-50 px-4 flex items-center justify-between">
-        <div 
-          className="flex items-center gap-2 cursor-default select-none active:scale-95 transition-transform"
-          onPointerDown={handlePointerDown}
-          onPointerUp={handlePointerUp}
-          onPointerLeave={handlePointerUp}
-        >
-          <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center">
-            <span className="text-background font-bold">P</span>
-          </div>
-          <h1 className="font-headline text-xl font-bold tracking-tight text-primary">PrimeFinish Pro</h1>
-        </div>
-        
+      {/* Mobile Top Header */}
+      <header className="fixed top-0 left-0 right-0 h-16 bg-background/80 backdrop-blur-md border-b z-50 px-4 flex items-center justify-between md:hidden">
+        <Logo />
         <div className="flex items-center gap-2">
           <Button 
-            variant="outline" 
-            size="sm" 
+            variant="ghost" 
+            size="icon" 
             onClick={() => setLanguage(language === 'en' ? 'am' : 'en')}
-            className="border-primary/60 text-primary hover:bg-primary hover:text-background transition-all font-bold px-3 py-1 h-8 min-w-[3.5rem] rounded-full text-xs"
+            className="text-primary hover:bg-primary/10 rounded-full h-9 w-9"
           >
-            {language === 'en' ? 'EN' : 'አማ'}
+            <Languages className="w-5 h-5" />
           </Button>
-          
           <Button 
             variant="ghost" 
             size="icon" 
             onClick={handleLogout}
-            className="text-muted-foreground hover:text-destructive h-8 w-8"
+            className="text-muted-foreground hover:text-destructive h-9 w-9"
           >
-            <LogOut className="w-4 h-4" />
+            <LogOut className="w-5 h-5" />
           </Button>
         </div>
       </header>
 
-      <nav className="fixed bottom-0 left-0 right-0 bg-background/95 backdrop-blur-md border-t h-16 z-50 flex items-center justify-around px-2 pb-safe-area-inset-bottom">
+      {/* Desktop Sidebar */}
+      <aside className="hidden md:flex flex-col w-72 h-screen sticky top-0 border-r bg-card/30 backdrop-blur-xl z-50 p-8 shrink-0">
+        <div className="mb-12">
+          <Logo />
+        </div>
+        
+        <nav className="flex-1 space-y-2">
+          {navItems.map((item) => {
+            const isActive = pathname === item.href;
+            return (
+              <Link key={item.href} href={item.href}>
+                <div className={cn(
+                  "flex items-center gap-4 px-4 py-3 rounded-xl transition-all duration-200 group",
+                  isActive 
+                    ? "bg-primary text-background shadow-lg shadow-primary/20" 
+                    : "text-muted-foreground hover:bg-primary/10 hover:text-primary"
+                )}>
+                  <item.icon className={cn("w-5 h-5", !isActive && "group-hover:scale-110 transition-transform")} />
+                  <span className="text-sm font-bold uppercase tracking-wider">{item.label}</span>
+                </div>
+              </Link>
+            );
+          })}
+        </nav>
+
+        <div className="pt-8 border-t border-primary/10 space-y-4">
+          <Button 
+            variant="outline" 
+            className="w-full justify-start gap-4 h-12 rounded-xl border-primary/20 hover:border-primary/40 hover:bg-primary/5 transition-all"
+            onClick={() => setLanguage(language === 'en' ? 'am' : 'en')}
+          >
+            <Languages className="w-5 h-5 text-primary" />
+            <span className="text-xs font-bold uppercase tracking-widest">
+              {language === 'en' ? 'Switch to Amharic' : 'ወደ እንግሊዝኛ ቀይር'}
+            </span>
+          </Button>
+          
+          <Button 
+            variant="ghost" 
+            className="w-full justify-start gap-4 h-12 rounded-xl text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-all"
+            onClick={handleLogout}
+          >
+            <LogOut className="w-5 h-5" />
+            <span className="text-xs font-bold uppercase tracking-widest">{t.logout}</span>
+          </Button>
+        </div>
+      </aside>
+
+      {/* Mobile Bottom Navigation */}
+      <nav className="fixed bottom-0 left-0 right-0 bg-background/90 backdrop-blur-xl border-t h-20 z-50 flex items-center justify-around px-2 pb-safe-area-inset-bottom md:hidden">
         {navItems.map((item) => {
           const isActive = pathname === item.href;
           return (
             <Link key={item.href} href={item.href} className="flex-1">
               <div className={cn(
-                "flex flex-col items-center justify-center gap-1 transition-colors",
-                isActive ? "text-primary" : "text-muted-foreground hover:text-primary"
+                "flex flex-col items-center justify-center gap-1.5 transition-all duration-300",
+                isActive ? "text-primary scale-110" : "text-muted-foreground hover:text-primary/70"
               )}>
-                <item.icon className={cn("w-5 h-5", isActive && "fill-current")} />
-                <span className="text-[10px] font-medium uppercase tracking-wider">{item.label}</span>
+                <div className={cn(
+                  "p-2 rounded-xl transition-colors",
+                  isActive ? "bg-primary/10" : "bg-transparent"
+                )}>
+                  <item.icon className={cn("w-5 h-5", isActive && "fill-current")} />
+                </div>
+                <span className="text-[10px] font-bold uppercase tracking-wider">{item.label}</span>
               </div>
             </Link>
           );
         })}
       </nav>
 
+      {/* Admin Access Dialog */}
       <Dialog open={isAdminDialogOpen} onOpenChange={setIsAdminDialogOpen}>
-        <DialogContent className="bg-card border-primary/20 text-foreground sm:max-w-sm rounded-xl">
+        <DialogContent className="bg-card border-primary/20 text-foreground sm:max-w-sm rounded-2xl shadow-2xl">
           <DialogHeader className="items-center text-center">
-            <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-4">
-              <ShieldAlert className="w-6 h-6 text-primary" />
+            <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mb-4">
+              <ShieldAlert className="w-8 h-8 text-primary" />
             </div>
-            <DialogTitle className="font-headline text-2xl text-primary">Restricted Access</DialogTitle>
-            <DialogDescription className="text-muted-foreground">
-              Please enter the 4-digit administrative PIN.
+            <DialogTitle className="font-headline text-3xl text-primary">Restricted Access</DialogTitle>
+            <DialogDescription className="text-muted-foreground text-sm mt-2">
+              Please enter the administrative access code.
             </DialogDescription>
           </DialogHeader>
-          <form onSubmit={handleAdminAuth} className="space-y-4 pt-4">
-            <Input
-              type="password"
-              placeholder="••••"
-              value={adminPin}
-              onChange={(e) => setAdminPin(e.target.value)}
-              className="text-center text-2xl tracking-[1em] font-bold h-14 bg-background border-primary/20 focus:border-primary"
-              maxLength={4}
-              required
-              autoFocus
-            />
-            <Button type="submit" className="w-full h-12 bg-primary text-background font-bold">
+          <form onSubmit={handleAdminAuth} className="space-y-6 pt-6">
+            <div className="relative">
+              <Input
+                type="password"
+                placeholder="••••"
+                value={adminPin}
+                onChange={(e) => setAdminPin(e.target.value)}
+                className="text-center text-3xl tracking-[0.8em] font-bold h-16 bg-background/50 border-primary/20 focus:border-primary rounded-xl"
+                maxLength={4}
+                required
+                autoFocus
+              />
+            </div>
+            <Button type="submit" className="w-full h-14 bg-primary text-background font-bold text-lg rounded-xl shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all">
               Unlock Terminal
             </Button>
           </form>
